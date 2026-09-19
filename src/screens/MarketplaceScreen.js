@@ -77,6 +77,18 @@ export default function MarketplaceScreen() {
     // TODO 6:
     // Increase only the matching item's quantity.
     // Update state and save the same updated array.
+    const updatedCart = cartItems.map((item) =>
+      item.id === productId ? { ...item, quantity: item.quantity + 1 } : item,
+    )
+
+    setCartItems(updatedCart)
+
+    try {
+      setStorageError('')
+      await saveCart(updatedCart)
+    } catch (error) {
+      setStorageError('Could not save your cart.')
+    }
   }
 
   async function decreaseQuantity(productId) {
@@ -84,12 +96,36 @@ export default function MarketplaceScreen() {
     // If quantity is greater than 1, decrease it.
     // If quantity would become 0, remove the item.
     // Update state and storage.
+    const updatedCart = cartItems
+      .map((item) =>
+        item.id === productId ? { ...item, quantity: item.quantity - 1 } : item,
+      )
+      .filter((item) => item.quantity > 0)
+
+    setCartItems(updatedCart)
+
+    try {
+      setStorageError('')
+      await saveCart(updatedCart)
+    } catch (error) {
+      setStorageError('Could not save your cart.')
+    }
   }
 
   async function removeFromCart(productId) {
     // TODO 8:
     // Use filter() to remove the matching id.
     // Update state and storage.
+    const updatedCart = cartItems.filter((item) => item.id !== productId)
+
+    setCartItems(updatedCart)
+
+    try {
+      setStorageError('')
+      await saveCart(updatedCart)
+    } catch (error) {
+      setStorageError('Could not save your cart.')
+    }
   }
 
   async function clearCart() {
