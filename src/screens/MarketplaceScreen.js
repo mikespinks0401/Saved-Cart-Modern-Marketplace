@@ -42,7 +42,7 @@ export default function MarketplaceScreen() {
     }
 
     restoreCart()
-  }, []);
+  }, [])
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(search.trim().toLowerCase()),
@@ -53,6 +53,24 @@ export default function MarketplaceScreen() {
     // If item already exists, increase its quantity.
     // Otherwise add it with quantity: 1.
     // Then update state AND call saveCart(updatedCart).
+    const existing = cartItems.find((item) => item.id === product.id)
+
+    const updatedCart = existing
+      ? cartItems.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
+        )
+      : [...cartItems, { ...product, quantity: 1 }]
+
+    setCartItems(updatedCart)
+
+    try {
+      setStorageError('')
+      await saveCart(updatedCart)
+    } catch (error) {
+      setStorageError('Could not save your cart.')
+    }
   }
 
   async function increaseQuantity(productId) {
